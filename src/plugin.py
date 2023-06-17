@@ -1,16 +1,15 @@
-from collections import namedtuple
 from pathlib import Path
 
 from pyocd.core.plugin import Plugin
 from pyocd.target.pack.cmsis_pack import CmsisPack
 
-Pack = namedtuple("Pack", ["vendor", "pack", "version"])
-
 
 class PackPlugin(Plugin):
     def __init__(self) -> None:
+        # Find the pack file
         packs = Path(__file__).parent.rglob("*.pack")
 
+        # Extract the 3 pack parameters (vendor, pack, version)
         for pack in packs:
             self._path = pack.absolute()
             self._vendor = pack.parents[1].name
@@ -23,6 +22,7 @@ class PackPlugin(Plugin):
     def load(self):
         path = self._path
 
+        # Create class where pack path is already defined
         class FixedCmsisPack(CmsisPack):
             def __init__(self) -> None:
                 super().__init__(path)
