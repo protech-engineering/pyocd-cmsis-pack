@@ -6,7 +6,7 @@ The setup.py script looks in the `src/pack` folder for a `*.pack` file deployed 
 
 From the path it extracts the 3 pack parameters: vendor, pack name and version. From these three it dynamically defines all the wheel package properties (package name, package version, etc.).
 
-It then exposes a pyocd plugin entry `pyocd.pack` that refers to the only source file `pack.py`. This plugin finds the `*.pack` file and discovers the 3 pack parameters (in the same way as the setup.py) and in the load function returns a `CmsisPack` class preconfigured with the pack path, ready to be consumed by PyOCD.
+It then exposes a pyocd plugin entry `pyocd.pack` that refers to the only source file `plugin.py`. This plugin finds the `*.pack` file and discovers the 3 pack parameters (in the same way as the setup.py) and in the load function returns a `CmsisPack` class preconfigured with the pack path, ready to be consumed by PyOCD.
 
 The most important thing is that this source structure is totally independent (does not need to be changed) from the pack file itself, you only add a pack file, build, and the package is ready for uploading.
 
