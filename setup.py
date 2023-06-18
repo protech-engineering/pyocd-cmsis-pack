@@ -1,21 +1,26 @@
+import os
+
 from setuptools import setup
 from pathlib import Path
 
-# Find the pack file
-packs = Path("src/pack").rglob("*.pack")
+CMSIS_PACK_ENV = "CMSIS_PACK"
+CMSIS_PACK_PATH = os.environ.get(CMSIS_PACK_ENV, None)
+
+if not CMSIS_PACK_PATH:
+    raise Exception()
+
+CMSIS_PACK = Path(CMSIS_PACK_PATH)
 
 # Extract 3 pack parameters (vendor, pack and version)
-for pack in packs:
-    PATH = pack.absolute()
-    VENDOR = pack.parents[1].name
-    PACK = pack.parents[0].name
-    VERSION = pack.stem
-    break
+PATH = CMSIS_PACK.absolute()
+VENDOR = CMSIS_PACK.parents[1].name
+PACK = CMSIS_PACK.parents[0].name
+VERSION = CMSIS_PACK.stem
 
 # CMSIS Pack name (formatted a bit)
-PN = f"{VENDOR.lower()}_{PACK.lower()}"
+PN = f"{VENDOR}.{PACK}"
 # python package name
-PKG = f"cmsis_pack_{PN}"
+PKG = f"pyocd_cmsis_pack.{PN}"
 
 setup(
     name=PKG,

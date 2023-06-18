@@ -1,3 +1,4 @@
+import importlib_metadata
 from pathlib import Path
 
 from pyocd.core.plugin import Plugin
@@ -6,16 +7,21 @@ from pyocd.target.pack.cmsis_pack import CmsisPack
 
 class PackPlugin(Plugin):
     def __init__(self) -> None:
-        # Find the pack file
-        packs = Path(__file__).parent.rglob("*.pack")
+        # Module is pyocd_cmsis_pack.[vendor].[pack].plugin
+        module = __name__.split(".")
+        # Distribution name is pyocd_cmsis_pack.[vendor].[pack]
+        distribution_name = ".".join(__name__.split(".")[:-1])
 
-        # Extract the 3 pack parameters (vendor, pack, version)
-        for pack in packs:
-            self._path = pack.absolute()
-            self._vendor = pack.parents[1].name
-            self._pack = pack.parents[0].name
-            self._version = pack.stem
-            break
+        self._vendor = module[1]
+        self._pack = module[2]
+        self._version = importlib_metadata.version(distribution_name)
+        self._path = (
+            Path(__file__).parent
+            / "pack"
+            / self._vendor
+            / self._pack
+            / f"{self._version}.pack"
+        )
 
         super().__init__()
 
@@ -31,7 +37,7 @@ class PackPlugin(Plugin):
 
     @property
     def name(self):
-        return f"{self._vendor.lower()}_{self._pack.lower()}"
+        return f"{self._vendor}.{self._pack}"
 
     @property
     def description(self):
